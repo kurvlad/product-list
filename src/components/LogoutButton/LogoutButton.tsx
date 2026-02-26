@@ -15,7 +15,6 @@ const LogoutButton: React.FC = () => {
   };
 
   return (
-    // <Button variant="outlined" color="primary" sx={{ mt: 3 }}>
     <Button
       variant="contained"
       onClick={handleLogout}

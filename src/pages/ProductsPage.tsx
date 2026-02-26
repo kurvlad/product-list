@@ -36,7 +36,6 @@ const ProductsPage: React.FC = () => {
 
   const [searchInput, setSearchInput] = useState("");
 
-  // Дебаунс поиска
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
       handleSearchChange(searchInput);

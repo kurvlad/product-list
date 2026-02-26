@@ -37,18 +37,16 @@ export const useProducts = () => {
     isMounted.current = true;
 
     async function loadProducts() {
-      // Не показываем загрузку при первом монтировании если есть данные
       if (rows.length === 0) {
         setLoading(true);
       }
       setError(null);
 
       try {
-        // Формируем URL в зависимости от поискового запроса
         let url = "https://dummyjson.com/products";
         if (searchQuery && searchQuery.trim() !== "") {
           url = `https://dummyjson.com/products/search?q=${encodeURIComponent(
-            searchQuery.trim(),
+            searchQuery.trim()
           )}`;
         }
 
@@ -75,7 +73,6 @@ export const useProducts = () => {
           price: p.price,
         }));
 
-        // Проверяем, что компонент все еще смонтирован
         if (isMounted.current) {
           setRows(mapped);
           setTotal(data.total ?? mapped.length);
@@ -86,7 +83,6 @@ export const useProducts = () => {
           return;
         }
 
-        // Проверяем, что компонент все еще смонтирован
         if (isMounted.current) {
           setError("Ошибка при загрузке товаров. Попробуйте позже.");
           console.error("Error loading products:", e);
@@ -104,30 +100,25 @@ export const useProducts = () => {
       isMounted.current = false;
       controller.abort();
     };
-  }, [searchQuery]); // Убираем rows.length из зависимостей
+  }, [searchQuery]);
 
-  // Сортировка с правильной типизацией
   const sortedRows = useMemo(() => {
     const copy = [...rows];
 
     return copy.sort((a, b) => {
       const dir = sortOrder === "asc" ? 1 : -1;
 
-      // Для числовых полей
       if (sortKey === "price" || sortKey === "rating") {
         return (a[sortKey] - b[sortKey]) * dir;
       }
 
-      // Для строковых полей с проверкой на null/undefined
       const aValue = a[sortKey] ?? "";
       const bValue = b[sortKey] ?? "";
 
-      // Убеждаемся, что значения - строки
       return String(aValue).localeCompare(String(bValue)) * dir;
     });
   }, [rows, sortKey, sortOrder]);
 
-  // Пагинация
   const pagedRows = useMemo(() => {
     const start = (page - 1) * ROWS_PER_PAGE;
     return sortedRows.slice(start, start + ROWS_PER_PAGE);
@@ -138,7 +129,6 @@ export const useProducts = () => {
   const from = sortedRows.length === 0 ? 0 : (page - 1) * ROWS_PER_PAGE + 1;
   const to = Math.min(page * ROWS_PER_PAGE, sortedRows.length);
 
-  // Обработчики с правильными зависимостями
   const handleSortChange = useCallback((key: SortKey) => {
     setPage(1);
     setSortKey((prevKey) => {
@@ -152,7 +142,6 @@ export const useProducts = () => {
   }, []);
 
   const handleSearchChange = useCallback((value: string) => {
-    // Обновляем поисковый запрос только если он изменился
     setSearchQuery((prev) => {
       const trimmed = value.trim();
       if (prev === trimmed) return prev;
@@ -169,7 +158,6 @@ export const useProducts = () => {
 
   const handleAddToCart = useCallback((product: ProductRow) => {
     console.log(`Товар "${product.title}" добавлен в корзину`);
-    // Здесь можно добавить уведомление пользователя
   }, []);
 
   const handlePageChange = useCallback((newPage: number) => {
